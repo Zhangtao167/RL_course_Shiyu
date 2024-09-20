@@ -17,22 +17,22 @@ parser = argparse.ArgumentParser("Grid World Environment")
 
 ## ==================== User settings ===================='''
 # specify the number of columns and rows of the grid world
-parser.add_argument("--env-size", type=Union[list, tuple, np.ndarray], default=(5,5) )   
+parser.add_argument("--env-size", type=Union[list, tuple, np.ndarray], default=(4,4) )   
 
 # specify the start state
 parser.add_argument("--start-state", type=Union[list, tuple, np.ndarray], default=(0,0))
 
 # specify the target state
-parser.add_argument("--target-state", type=Union[list, tuple, np.ndarray], default=(4,4))
+parser.add_argument("--target-state", type=Union[list, tuple, np.ndarray], default=(2,2))
 
 # sepcify the forbidden states
-parser.add_argument("--forbidden-states", type=list, default=[ (2, 1), (3, 3), (1, 3)] )
+parser.add_argument("--forbidden-states", type=list, default=[ (2, 1), (1, 2), (3, 2)] )
 
 # sepcify the reward when reaching target
-parser.add_argument("--reward-target", type=float, default = 10)
+parser.add_argument("--reward-target", type=float, default = 1)
 
 # sepcify the reward when entering into forbidden area
-parser.add_argument("--reward-forbidden", type=float, default = -5)
+parser.add_argument("--reward-forbidden", type=float, default = -1)
 
 # sepcify the reward for each step
 parser.add_argument("--reward-step", type=float, default = -1)
@@ -47,7 +47,7 @@ parser.add_argument("--action-space", type=list, default=[(0, 1), (1, 0), (0, -1
 parser.add_argument("--debug", type=bool, default=False)
 parser.add_argument("--animation-interval", type=float, default = 0.2)
 parser.add_argument("--results_path", type=str, default = "/storage/zhangtao/project2024/RL_course_Shiyu/Code_for_grid_world/python_version/assignment/assignment1/results")
-parser.add_argument("--exp_name", type=str, default = "assignment1")
+parser.add_argument("--exp_name", type=str, default = "assignment2")
 parser.add_argument("--exp_date", type=str, default = "2024-09-13")
 parser.add_argument("--policy_type", type=str, help = "deterministic or stochastic",default="deterministic")
 parser.add_argument("--plot_policy", type=int, default = 1)
