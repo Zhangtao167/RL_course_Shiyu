@@ -97,7 +97,7 @@ class GridWorld():
         return state == self.target_state
     
 
-    def render(self,animation_interval=None):
+    def render(self,animation_interval=None,index_V_his = None):
         if self.canvas is None:
             plt.ion()                             
             self.canvas, self.ax = plt.subplots()   
@@ -134,6 +134,12 @@ class GridWorld():
         self.traj_obj.set_data(traj_x, traj_y)
 
         plt.draw()
+        if index_V_his is not None:
+            plt.title('Iteration: '+str(index_V_his))
+            plt.savefig(self.args.results_path+'/iteration_'+str(index_V_his)+'.png')
+        elif index_V_his=="optimal":
+            plt.title('Optimal Policy')
+            plt.savefig(self.args.results_path+'/optimal_policy.png')
         if not self.args.is_save_gif:
             plt.savefig(self.args.results_path+'/policy_'+self.args.V_cal_method+'.png')
         else:
@@ -177,4 +183,4 @@ class GridWorld():
             y = i // self.env_size[0]
             if (x, y) in self.forbidden_states:
                 continue
-            self.ax.text(x, y, str(value), ha='center', va='center', fontsize=10, color='black')
+            self.ax.text(x, y, f'{value:.{4}f}', ha='center', va='center', fontsize=10, color='black')

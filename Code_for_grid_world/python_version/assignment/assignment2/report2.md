@@ -1,4 +1,4 @@
-# Assignment 1 Report
+# Assignment 2 Report
 
 **Course:** Reinforcement Learning  
 **Student Number:** 20241203425
@@ -8,7 +8,7 @@
 ## 1. Software Description 
 
 - **Programming Language:** Python 3.12
-- **Libraries Used:** NumPy, Matplotlib, etc.
+- **Libraries Used:** NumPy, Matplotlib, etc. More details can be found in [requirements.txt](./code/requirements.txt).
 - **Custom Code:** RL_alg1.py, etc.
 
 ---
@@ -21,8 +21,9 @@ Describe the reward setting and discount rate used in the task.
 •  1 target area, 3 forbidden areas
 • 13 states, each of which has 5 actions
 - **Reward setting:**  
-  - \( r_{\text{step}} = -1 \)  
-  - \( r_{\text{forbidden}} = -1 \)  
+  - \( r_{\text{step}} = -0.5 \)  
+  - \( r_{\text{forbidden}} = -1 \) 
+  - \( r_{\text{boundary}} = -1 \) 
   - \( r_{\text{target}} = 1 \)
   
 - **Discount rate (\(\gamma\)):** 0.9
@@ -83,12 +84,13 @@ More details can be found in [V_iterative_stochastic.csv](./results/stochastic/V
 ![](./results/stochastic/policy_iter.png)
 
 ## 4 Key parts of the code
-
+Usage can be found in [run.sh](./code/run.sh)
 Get the matrix \(P^\pi\) and the vector \(r^\pi\) from the policy matrix:
 ```python
 def compute_P_pi_and_r_pi(env, policy_matrix):
     num_states = env.num_states
     num_actions = len(env.action_space)
+    num_forbidden_states = len(env.forbidden_states)
     P_pi = np.zeros((num_states, num_states))
     r_pi = np.zeros(num_states)
     
@@ -96,7 +98,8 @@ def compute_P_pi_and_r_pi(env, policy_matrix):
         x = s % env.env_size[0]
         y = s // env.env_size[0]
         state = (x, y)
-        
+        if state in env.forbidden_states:
+            continue
         for a in range(num_actions):
             action = env.action_space[a]
             pi_a_s = policy_matrix[s, a]
@@ -104,10 +107,13 @@ def compute_P_pi_and_r_pi(env, policy_matrix):
                 continue
             # Compute next state s' and reward r(s,a)
             next_state, reward = env._get_next_state_and_reward(state, action)
+            # if next_state == state:
+            #     import pdb;pdb.set_trace()
             s_prime = next_state[1] * env.env_size[0] + next_state[0]
             P_pi[s, s_prime] += pi_a_s
             r_pi[s] += pi_a_s * reward
     return P_pi, r_pi
+
 ```
 Use the closed-form algorithm to get the state value:
 ```python
@@ -126,6 +132,9 @@ def policy_evaluation(env, policy_matrix, gamma, theta=1e-6):
             x = s % env.env_size[0]
             y = s // env.env_size[0]
             state = (x, y)
+            if state in env.forbidden_states:
+                V[s] = 0
+                continue
             v_new = 0
             for a in range(len(env.action_space)):
                 action = env.action_space[a]
